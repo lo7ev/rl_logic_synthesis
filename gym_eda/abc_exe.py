@@ -76,28 +76,31 @@ class AbcExeOpt(gym.Env):
         cmds = 'read ' + self.init_bench + '; strash; print_stats; '
         subp_log = subprocess.run([self.abc_exe, '-c', cmds], stdout=subprocess.PIPE, text=True)
         abc_log = subp_log.stdout.replace('\x1b[1;37m', '').replace('\x1b[0m', '')
+        nd, lev = 0, 0
         for line in abc_log.split('\n'):
             if 'i/o' in line:
                 nd = int( (re.search('and *= *(\d+) *', line))[1] )
                 lev = int( (re.search('lev *= *(\d+) *', line))[1] )
         return nd, lev
-    
+
     def getBaseStats(self):
         cmds = 'read ' + self.init_bench + '; strash; '
         cmds += self.baseline + "; "
         cmds += 'print_stats; '
         subp_log = subprocess.run([self.abc_exe, '-c', cmds], stdout=subprocess.PIPE, text=True)
         abc_log = subp_log.stdout.replace('\x1b[1;37m', '').replace('\x1b[0m', '')
+        nd, lev = 0, 0
         for line in abc_log.split('\n'):
             if 'i/o' in line:
                 nd = int( (re.search('and *= *(\d+) *', line))[1] )
                 lev = int( (re.search('lev *= *(\d+) *', line))[1] )
         return nd, lev
-    
+
     def getStepStats(self):
         cmds = 'read ' + self.step_bench + '; strash; print_stats; '
         subp_log = subprocess.run([self.abc_exe, '-c', cmds], stdout=subprocess.PIPE, text=True)
         abc_log = subp_log.stdout.replace('\x1b[1;37m', '').replace('\x1b[0m', '')
+        nd, lev = 0, 0
         for line in abc_log.split('\n'):
             if 'i/o' in line:
                 nd = int( (re.search('and *= *(\d+) *', line))[1] )
